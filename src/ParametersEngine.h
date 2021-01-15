@@ -66,6 +66,9 @@ NoOfMicroscopicStates=50
     void Initialize(string inputfile_);
     double matchstring(string file, string match);
     string matchstring2(string file, string match);
+
+    double eta;
+    double omega_min, omega_max, domega;
 };
 
 void Parameters::Initialize(string inputfile_)
@@ -184,6 +187,11 @@ void Parameters::Initialize(string inputfile_)
     Disorder_Strength = matchstring(inputfile_, "Disorder_Strength");
     Boltzman_constant = matchstring(inputfile_, "Boltzman_constant");
 
+    eta = matchstring(inputfile_, "eta");
+    // omega_min = matchstring(inputfile_, "omega_min");
+    // omega_max = matchstring(inputfile_, "omega_max");
+    domega = matchstring(inputfile_, "domega");
+
 
     string J_Hund_str = "J_Hund";
     string OnSiteE_str = "OnSiteE";
@@ -278,7 +286,7 @@ void Parameters::Initialize(string inputfile_)
         }
 
     }
-    if (cooling_double == 2.0)
+    else if (cooling_double == 2.0)
     {
         Cooling_ = true;
         temp_values_ = matchstring2(inputfile_, "Temperature_Values");
@@ -309,7 +317,7 @@ void Parameters::Initialize(string inputfile_)
     }
     else
     {
-        cout << "ERROR: Cooling can be only 1 (true) or 0 (false)" << endl;
+        cout << "ERROR: Cooling can be only 1, 0 or 2" << endl;
         assert(cooling_double == 0.0);
     }
 

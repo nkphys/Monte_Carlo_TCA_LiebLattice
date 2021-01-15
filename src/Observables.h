@@ -108,7 +108,7 @@ void Observables::Calculate_Akw()
     int l_posx, l_posy;
 
     Mat_3_Complex_doub A_up_00, A_up_11, A_up_22;
-    Mat_3_Complex_doub A_dn_00, A_dn_11, A_dn_22 ;
+    Mat_3_Complex_doub A_dn_00, A_dn_11, A_dn_22;
     A_up_00.resize(Coordinates_.ncells_);
     A_dn_00.resize(Coordinates_.ncells_);
     A_up_11.resize(Coordinates_.ncells_);
@@ -167,39 +167,38 @@ void Observables::Calculate_Akw()
                     c1 = Coordinates_.Nbasis(l_posx, l_posy, 0) + Coordinates_.nbasis_;
                     c2 = Coordinates_.Nbasis(j_posx, j_posy, 0) + Coordinates_.nbasis_;
                     A_dn_00[j][l][omega_ind] += conj(Hamiltonian_.Ham_(c1, n)) * Hamiltonian_.Ham_(c2, n) *
-                            Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
+                                                Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
 
                     c1 = Coordinates_.Nbasis(l_posx, l_posy, 0);
                     c2 = Coordinates_.Nbasis(j_posx, j_posy, 0);
                     A_up_00[j][l][omega_ind] += conj(Hamiltonian_.Ham_(c1, n)) * Hamiltonian_.Ham_(c2, n) *
-                            Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
+                                                Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
 
                     c1 = Coordinates_.Nbasis(l_posx, l_posy, 1) + Coordinates_.nbasis_;
                     c2 = Coordinates_.Nbasis(j_posx, j_posy, 1) + Coordinates_.nbasis_;
                     A_dn_11[j][l][omega_ind] += conj(Hamiltonian_.Ham_(c1, n)) * Hamiltonian_.Ham_(c2, n) *
-                            Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
+                                                Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
 
                     c1 = Coordinates_.Nbasis(l_posx, l_posy, 1);
                     c2 = Coordinates_.Nbasis(j_posx, j_posy, 1);
                     A_up_11[j][l][omega_ind] += conj(Hamiltonian_.Ham_(c1, n)) * Hamiltonian_.Ham_(c2, n) *
-                            Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
+                                                Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
 
                     c1 = Coordinates_.Nbasis(l_posx, l_posy, 2) + Coordinates_.nbasis_;
                     c2 = Coordinates_.Nbasis(j_posx, j_posy, 2) + Coordinates_.nbasis_;
                     A_dn_22[j][l][omega_ind] += conj(Hamiltonian_.Ham_(c1, n)) * Hamiltonian_.Ham_(c2, n) *
-                            Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
+                                                Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
 
                     c1 = Coordinates_.Nbasis(l_posx, l_posy, 2);
                     c2 = Coordinates_.Nbasis(j_posx, j_posy, 2);
                     A_up_22[j][l][omega_ind] += conj(Hamiltonian_.Ham_(c1, n)) * Hamiltonian_.Ham_(c2, n) *
-                            Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
-
+                                                Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
                 }
 
                 if (j == l)
                 {
-                    Nup_check += (A_up_00[j][l][omega_ind]+A_up_11[j][l][omega_ind]+A_up_22[j][l][omega_ind]) * d_omega;
-                    Ndn_check += (A_dn_00[j][l][omega_ind]+A_dn_11[j][l][omega_ind]+A_dn_22[j][l][omega_ind]) * d_omega;
+                    Nup_check += (A_up_00[j][l][omega_ind] + A_up_11[j][l][omega_ind] + A_up_22[j][l][omega_ind]) * d_omega;
+                    Ndn_check += (A_dn_00[j][l][omega_ind] + A_dn_11[j][l][omega_ind] + A_dn_22[j][l][omega_ind]) * d_omega;
                 }
             }
         }
@@ -279,35 +278,34 @@ void Observables::Calculate_Akw()
                     l_posy = Coordinates_.indy_cellwise(l);
 
                     temp_up_00 += one_complex *
-                            exp(iota_complex * (kx * (j_posx - l_posx) +
-                                                ky * (j_posy - l_posy) )) *
-                            A_up_00[j][l][omega_ind];
+                                  exp(iota_complex * (kx * (j_posx - l_posx) +
+                                                      ky * (j_posy - l_posy))) *
+                                  A_up_00[j][l][omega_ind];
 
                     temp_dn_00 += one_complex *
-                            exp(iota_complex * (kx * (j_posx - l_posx) +
-                                                ky * (j_posy - l_posy))) *
-                            A_dn_00[j][l][omega_ind];
+                                  exp(iota_complex * (kx * (j_posx - l_posx) +
+                                                      ky * (j_posy - l_posy))) *
+                                  A_dn_00[j][l][omega_ind];
 
                     temp_up_11 += one_complex *
-                            exp(iota_complex * (kx * (j_posx - l_posx) +
-                                                ky * (j_posy - l_posy) )) *
-                            A_up_11[j][l][omega_ind];
+                                  exp(iota_complex * (kx * (j_posx - l_posx) +
+                                                      ky * (j_posy - l_posy))) *
+                                  A_up_11[j][l][omega_ind];
 
                     temp_dn_11 += one_complex *
-                            exp(iota_complex * (kx * (j_posx - l_posx) +
-                                                ky * (j_posy - l_posy))) *
-                            A_dn_11[j][l][omega_ind];
+                                  exp(iota_complex * (kx * (j_posx - l_posx) +
+                                                      ky * (j_posy - l_posy))) *
+                                  A_dn_11[j][l][omega_ind];
 
                     temp_up_22 += one_complex *
-                            exp(iota_complex * (kx * (j_posx - l_posx) +
-                                                ky * (j_posy - l_posy) )) *
-                            A_up_22[j][l][omega_ind];
+                                  exp(iota_complex * (kx * (j_posx - l_posx) +
+                                                      ky * (j_posy - l_posy))) *
+                                  A_up_22[j][l][omega_ind];
 
                     temp_dn_22 += one_complex *
-                            exp(iota_complex * (kx * (j_posx - l_posx) +
-                                                ky * (j_posy - l_posy))) *
-                            A_dn_22[j][l][omega_ind];
-
+                                  exp(iota_complex * (kx * (j_posx - l_posx) +
+                                                      ky * (j_posy - l_posy))) *
+                                  A_dn_22[j][l][omega_ind];
                 }
             }
             //Use 1:6:7----for gnuplot
@@ -322,21 +320,18 @@ void Observables::Calculate_Akw()
         }
         file_Akw_out << endl;
     }
-
-
 }
 
 void Observables::Calculate_Nw()
 {
 
-
     //---------Read from input file-----------------------//
-    string fileout = "Nw_total.txt";
+    string fileout = "Nw_total_" + Parameters_.Seed_file_name_;
     double omega_min, omega_max, d_omega;
-    double eta = 0.1;
-    omega_min = Hamiltonian_.eigs_[0]-5.0;
-    omega_max = Hamiltonian_.eigs_[Hamiltonian_.eigs_.size()-1]+5.0;
-    d_omega = 0.001;
+    double eta = Parameters_.eta;
+    omega_min = Hamiltonian_.eigs_[0] - 5.0;
+    omega_max = Hamiltonian_.eigs_[Hamiltonian_.eigs_.size() - 1] + 5.0;
+    d_omega = Parameters_.domega;
     //---------------------------------------------------//
 
     int omega_index_max = int((omega_max - omega_min) / (d_omega));
@@ -353,15 +348,24 @@ void Observables::Calculate_Nw()
         for (int n = 0; n < Hamiltonian_.Ham_.n_row(); n++)
         {
 
-            temp_val += Lorentzian(omega_min + (omega_ind * d_omega) - Hamiltonian_.eigs_[n], eta);
+            temp_val +=
+                Lorentzian(omega_min + (omega_ind * d_omega) -Hamiltonian_.eigs_[n], eta);
         }
 
-        file_Nw_out << omega_min + (omega_ind * d_omega) << "     " << temp_val << "     " << endl;
+        file_Nw_out << omega_min + (omega_ind * d_omega) << "     "
+                    << (1.0 / Hamiltonian_.eigs_.size()) * temp_val
+                    << "     " << endl;
     }
 
     file_Nw_out << "#mu = " << Parameters_.mus << endl;
 
+    ofstream spectrum;
+    spectrum.open("spectrum" + Parameters_.Seed_file_name_);
 
+    for (int i=0; i < Hamiltonian_.eigs_.size(); i++){
+        spectrum << i << "\t" << Hamiltonian_.eigs_[i] << endl;
+    }
+    spectrum.close();
 }
 
 void Observables::Calculate_OrbResolved_Nw()
@@ -399,8 +403,6 @@ void Observables::Calculate_OrbResolved_Nw()
     }
 
     file_Nw_out << "#mu = " << Parameters_.mus << endl;
-
-
 }
 
 void Observables::Get_Non_Interacting_dispersion()
@@ -419,8 +421,12 @@ double Observables::Lorentzian(double x, double brd)
 void Observables::DensityOfStates()
 {
     //-----------Calculate Bandwidth------//
-    BandWidth = 2.0;
+    // double omega_min, omega_max;
+    // omega_min = Hamiltonian_.eigs_[0] - 5.0;
+    // omega_max - Hamiltonian
+
     //-----------------------------------//
+    // string fileout = "";
 
 } // ----------
 
@@ -573,57 +579,53 @@ void Observables::SiSjFULL()
     double sxi, syi, szi, sxj, syj, szj;
     int site_, site_p, ax, ay, ix, iy, iorb, jx, jy, jorb;
 
-    for (int i = 0; i < 3*lx_*ly_; i++)
+    for (int i = 0; i < 3 * lx_ * ly_; i++)
     {
-        ix=Coordinates_.indx_basiswise_[i];
-        iy=Coordinates_.indy_basiswise_[i];
-        iorb=Coordinates_.indorb_basiswise_[i];
+        ix = Coordinates_.indx_basiswise_[i];
+        iy = Coordinates_.indy_basiswise_[i];
+        iorb = Coordinates_.indorb_basiswise_[i];
         ei = MFParams_.etheta[ix][iy][iorb];
         ai = MFParams_.ephi[ix][iy][iorb];
-        sxi=MFParams_.Moment_Size[ix][iy][iorb]*cos(ai) * sin(ei);
-        syi=MFParams_.Moment_Size[ix][iy][iorb]*sin(ai) * sin(ei);
-        szi=MFParams_.Moment_Size[ix][iy][iorb]*cos(ei);
+        sxi = MFParams_.Moment_Size[ix][iy][iorb] * cos(ai) * sin(ei);
+        syi = MFParams_.Moment_Size[ix][iy][iorb] * sin(ai) * sin(ei);
+        szi = MFParams_.Moment_Size[ix][iy][iorb] * cos(ei);
 
-
-        for (int j = 0; j < 3*lx_*ly_; j++)
+        for (int j = 0; j < 3 * lx_ * ly_; j++)
         {
-            jx=Coordinates_.indx_basiswise_[j];
-            jy=Coordinates_.indy_basiswise_[j];
-            jorb=Coordinates_.indorb_basiswise_[j];
+            jx = Coordinates_.indx_basiswise_[j];
+            jy = Coordinates_.indy_basiswise_[j];
+            jorb = Coordinates_.indorb_basiswise_[j];
             ej = MFParams_.etheta[jx][jy][jorb];
             aj = MFParams_.ephi[jx][jy][jorb];
-            sxj=MFParams_.Moment_Size[jx][jy][jorb]*cos(aj) * sin(ej);
-            syj=MFParams_.Moment_Size[jx][jy][jorb]*sin(aj) * sin(ej);
-            szj=MFParams_.Moment_Size[jx][jy][jorb]*cos(ej);
+            sxj = MFParams_.Moment_Size[jx][jy][jorb] * cos(aj) * sin(ej);
+            syj = MFParams_.Moment_Size[jx][jy][jorb] * sin(aj) * sin(ej);
+            szj = MFParams_.Moment_Size[jx][jy][jorb] * cos(ej);
 
-
-
-            SiSj_(i, j) = (sxi*sxj) +  (syi*syj) + (szi*szj);
+            SiSj_(i, j) = (sxi * sxj) + (syi * syj) + (szi * szj);
 
             //cout << xr << " "<< yr<< " "<<  SiSj_(xr,yr) << endl;
         }
     }
 
-
-//    for (int qx = 0; qx < lx_; qx++)
-//    {
-//        for (int qy = 0; qy < ly_; qy++)
-//        {
-//            SiSjQ_(qx, qy) = complex<double>(0.0, 0.0);
-//            for (int xr = 0; xr < lx_; xr++)
-//            {
-//                for (int yr = 0; yr < ly_; yr++)
-//                {
-//                    phase = 2.0 * Parameters_.pi * (double(qx * xr) / double(lx_) + double(qy * yr) / double(ly_));
-//                    Cos_ij = cos(phase);
-//                    Sin_ij = sin(phase);
-//                    SiSjQ_(qx, qy) += SiSj_(xr, yr) * complex<double>(Cos_ij, Sin_ij);
-//                }
-//            }
-//            SiSjQ_(qx, qy) *= double(1.0 / (lx_ * ly_));
-//            //cout << qx << " "<< qy<< " "<<  SiSjQ_(qx,qy) << endl;
-//        }
-//    }
+    //    for (int qx = 0; qx < lx_; qx++)
+    //    {
+    //        for (int qy = 0; qy < ly_; qy++)
+    //        {
+    //            SiSjQ_(qx, qy) = complex<double>(0.0, 0.0);
+    //            for (int xr = 0; xr < lx_; xr++)
+    //            {
+    //                for (int yr = 0; yr < ly_; yr++)
+    //                {
+    //                    phase = 2.0 * Parameters_.pi * (double(qx * xr) / double(lx_) + double(qy * yr) / double(ly_));
+    //                    Cos_ij = cos(phase);
+    //                    Sin_ij = sin(phase);
+    //                    SiSjQ_(qx, qy) += SiSj_(xr, yr) * complex<double>(Cos_ij, Sin_ij);
+    //                }
+    //            }
+    //            SiSjQ_(qx, qy) *= double(1.0 / (lx_ * ly_));
+    //            //cout << qx << " "<< qy<< " "<<  SiSjQ_(qx,qy) << endl;
+    //        }
+    //    }
 
 } // ----------
 
@@ -659,16 +661,15 @@ void Observables::quantum_SiSjQ_Average()
 void Observables::SiSj_Average()
 {
 
-    for (int x = 0; x < lx_*ly_*3; x++)
+    for (int x = 0; x < lx_ * ly_ * 3; x++)
     {
-        for (int y = 0; y < ly_*ly_*3; y++)
+        for (int y = 0; y < ly_ * ly_ * 3; y++)
         {
             SiSj_Mean_(x, y) += SiSj_(x, y);
             SiSj_square_Mean_(x, y) += (SiSj_(x, y) * SiSj_(x, y));
             //cout << qx << " "<< qy<< " "<<  SiSjQ_(qx,qy) << endl;
         }
     }
-
 
 } // ----------
 
@@ -738,9 +739,9 @@ void Observables::Initialize()
     Nematic_order_mean_ = 0.0;
     Nematic_order_square_mean_ = 0.0;
 
-    SiSj_.resize(lx_*ly_*3, lx_*ly_*3);
-    SiSj_Mean_.resize(lx_*ly_*3, lx_*ly_*3);
-    SiSj_square_Mean_.resize(lx_*ly_*3, lx_*ly_*3);
+    SiSj_.resize(lx_ * ly_ * 3, lx_ * ly_ * 3);
+    SiSj_Mean_.resize(lx_ * ly_ * 3, lx_ * ly_ * 3);
+    SiSj_square_Mean_.resize(lx_ * ly_ * 3, lx_ * ly_ * 3);
 
     SiSjQ_Mean_.resize(lx_, ly_);
     SiSjQ_square_Mean_.resize(lx_, ly_);

@@ -13,6 +13,9 @@ Fix_mu=0
 fixed_mu_value=-2.8
 Boltzman_constant=1.0
 
+eta=0.5
+domega=0.01
+
 RandomDisorderSeed=413
 Disorder_Strength=0.0
 J_Hund0=-10.0

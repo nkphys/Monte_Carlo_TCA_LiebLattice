@@ -61,10 +61,10 @@ public:
     Matrix<complex<double>> HamCluster_;
     Matrix<double> Tx, Ty, Tpxpy, Tpxmy;
     vector<double> eigs_, eigsCluster_, eigsCluster_saved_, eigs_saved_, sx_, sy_, sz_;
-    Matrix<double> IntraCell_Hopp, InterCell_px_Hopp, InterCell_py_Hopp, InterCell_pxmy_Hopp ;
-
+    Matrix<double> IntraCell_Hopp, InterCell_px_Hopp, InterCell_py_Hopp, InterCell_pxmy_Hopp;
 
     double HS_factor;
+
 };
 
 double Hamiltonian::chemicalpotential(double muin, double filling)
@@ -285,14 +285,14 @@ void Hamiltonian::Initialize()
 
     ly_cluster_ = Parameters_.ly_cluster;
     lx_cluster_ = Parameters_.lx_cluster;
-    ncells_cluster = lx_cluster_*ly_cluster_;
+    ncells_cluster = lx_cluster_ * ly_cluster_;
 
     ly_ = Parameters_.ly;
     lx_ = Parameters_.lx;
-    ncells_ = lx_*ly_;
+    ncells_ = lx_ * ly_;
     n_orbs_ = Parameters_.n_orbs;
     int space = 2 * ncells_ * n_orbs_;
-    int spaceCluster = 2 * ncells_cluster* n_orbs_;
+    int spaceCluster = 2 * ncells_cluster * n_orbs_;
 
     HTB_.resize(space, space);
     Ham_.resize(space, space);
@@ -355,8 +355,6 @@ double Hamiltonian::GetCLEnergy()
     // Classical Energy
     EClassical = double(0.0);
 
-
-
     return EClassical;
 } // ----------
 
@@ -376,29 +374,26 @@ void Hamiltonian::InteractionsCreate()
         i_posx = Coordinates_.indx_cellwise(i);
         i_posy = Coordinates_.indy_cellwise(i);
 
-        for(int orb=0;orb<n_orbs_;orb++){
+        for (int orb = 0; orb < n_orbs_; orb++)
+        {
 
             ei = MFParams_.etheta[i_posx][i_posy][orb];
             ai = MFParams_.ephi[i_posx][i_posy][orb];
 
-            index=Coordinates_.Nbasis(i_posx, i_posy, orb);
+            index = Coordinates_.Nbasis(i_posx, i_posy, orb);
 
             Ham_(index, index) += Parameters_.J_Hund[orb] * (cos(ei)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb];
-            Ham_(index + (ncells_*n_orbs_), index + (ncells_*n_orbs_)) += Parameters_.J_Hund[orb] * (-cos(ei)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb];
-            Ham_(index, index + (ncells_*n_orbs_)) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), -sin(ai)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb]; //S-
-            Ham_(index + (ncells_*n_orbs_), index) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), sin(ai)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb];  //S+
+            Ham_(index + (ncells_ * n_orbs_), index + (ncells_ * n_orbs_)) += Parameters_.J_Hund[orb] * (-cos(ei)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb];
+            Ham_(index, index + (ncells_ * n_orbs_)) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), -sin(ai)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb]; //S-
+            Ham_(index + (ncells_ * n_orbs_), index) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), sin(ai)) * 0.5 * MFParams_.Moment_Size[i_posx][i_posy][orb];  //S+
 
             // On-Site potential
             for (int spin = 0; spin < 2; spin++)
             {
-                a = Coordinates_.Nbasis(i_posx,i_posy,orb) + ncells_*n_orbs_*spin;
-                Ham_(a, a) += complex<double>(1.0, 0.0) * (
-                            Parameters_.OnSiteE[orb] +
-                            MFParams_.Disorder[i_posx][i_posy][orb]
-                            );
+                a = Coordinates_.Nbasis(i_posx, i_posy, orb) + ncells_ * n_orbs_ * spin;
+                Ham_(a, a) += complex<double>(1.0, 0.0) * (Parameters_.OnSiteE[orb] +
+                                                           MFParams_.Disorder[i_posx][i_posy][orb]);
             }
-
-
         }
     }
 
@@ -427,33 +422,28 @@ void Hamiltonian::InteractionsClusterCreate(int Center_site)
         x_pos = (x_pos + Coordinates_.lx_) % Coordinates_.lx_;
         y_pos = (y_pos + Coordinates_.ly_) % Coordinates_.ly_;
 
-        i_original=Coordinates_.Ncell(x_pos, y_pos);
+        i_original = Coordinates_.Ncell(x_pos, y_pos);
 
-
-
-        for(int orb=0;orb<n_orbs_;orb++){
+        for (int orb = 0; orb < n_orbs_; orb++)
+        {
             ei = MFParams_.etheta[x_pos][y_pos][orb];
             ai = MFParams_.ephi[x_pos][y_pos][orb];
 
-            index=CoordinatesCluster_.Nbasis(i_posx, i_posy, orb);
+            index = CoordinatesCluster_.Nbasis(i_posx, i_posy, orb);
 
             HamCluster_(index, index) += Parameters_.J_Hund[orb] * (cos(ei)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb];
-            HamCluster_(index + ncells_cluster*n_orbs_, index + ncells_cluster*n_orbs_) += Parameters_.J_Hund[orb] * (-cos(ei)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb];
-            HamCluster_(index, index + ncells_cluster*n_orbs_) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), -sin(ai)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb]; //S-
-            HamCluster_(index + ncells_cluster*n_orbs_, index) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), sin(ai)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb];  //S+
-
+            HamCluster_(index + ncells_cluster * n_orbs_, index + ncells_cluster * n_orbs_) += Parameters_.J_Hund[orb] * (-cos(ei)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb];
+            HamCluster_(index, index + ncells_cluster * n_orbs_) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), -sin(ai)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb]; //S-
+            HamCluster_(index + ncells_cluster * n_orbs_, index) += Parameters_.J_Hund[orb] * sin(ei) * complex<double>(cos(ai), sin(ai)) * 0.5 * MFParams_.Moment_Size[x_pos][y_pos][orb];  //S+
 
             for (int spin = 0; spin < 2; spin++)
             {
-                a = CoordinatesCluster_.Nbasis(i_posx,i_posy,orb) + ncells_cluster*n_orbs_*spin;
-                HamCluster_(a, a) += complex<double>(1.0, 0.0) * (
-                            Parameters_.OnSiteE[orb] +
-                            MFParams_.Disorder[x_pos][y_pos][orb]
-                            );
+                a = CoordinatesCluster_.Nbasis(i_posx, i_posy, orb) + ncells_cluster * n_orbs_ * spin;
+                HamCluster_(a, a) += complex<double>(1.0, 0.0) * (Parameters_.OnSiteE[orb] +
+                                                                  MFParams_.Disorder[x_pos][y_pos][orb]);
             }
         }
     }
-
 
 } // ----------
 
@@ -463,11 +453,11 @@ void Hamiltonian::Check_up_down_symmetry()
     complex<double> temp(0, 0);
     complex<double> temp2;
 
-    for (int i = 0; i < ncells_*n_orbs_; i++)
+    for (int i = 0; i < ncells_ * n_orbs_; i++)
     {
-        for (int j = 0; j < ncells_*n_orbs_; j++)
+        for (int j = 0; j < ncells_ * n_orbs_; j++)
         {
-            temp2 = Ham_(i, j) - Ham_(i + ncells_*n_orbs_, j + ncells_*n_orbs_); //+ Ham_(i+orbs_*ns_,j) + Ham_(i,j+orbs_*ns_);
+            temp2 = Ham_(i, j) - Ham_(i + ncells_ * n_orbs_, j + ncells_ * n_orbs_); //+ Ham_(i+orbs_*ns_,j) + Ham_(i,j+orbs_*ns_);
             temp += temp2 * conj(temp2);
         }
     }
@@ -594,23 +584,26 @@ void Hamiltonian::HTBCreate()
         lx_pos = Coordinates_.indx_cellwise(l);
         ly_pos = Coordinates_.indy_cellwise(l);
 
-
         // * +x direction Neighbor
 
         m = Coordinates_.neigh(l, 0); //+x neighbour cell
         mx_pos = Coordinates_.indx_cellwise(m);
         my_pos = Coordinates_.indy_cellwise(m);
 
-        for (int spin=0; spin<2; spin++){
-            for(int orb1=0;orb1<n_orbs_;orb1++){
-                for(int orb2=0;orb2<n_orbs_;orb2++){
-                    if(Parameters_.hopping_NN_X(orb1,orb2)!=0.0){
-                        a = Coordinates_.Nbasis(lx_pos,ly_pos,orb1) + ncells_*n_orbs_*spin;
-                        b = Coordinates_.Nbasis(mx_pos,my_pos,orb2) + ncells_*n_orbs_*spin;
+        for (int spin = 0; spin < 2; spin++)
+        {
+            for (int orb1 = 0; orb1 < n_orbs_; orb1++)
+            {
+                for (int orb2 = 0; orb2 < n_orbs_; orb2++)
+                {
+                    if (Parameters_.hopping_NN_X(orb1, orb2) != 0.0)
+                    {
+                        a = Coordinates_.Nbasis(lx_pos, ly_pos, orb1) + ncells_ * n_orbs_ * spin;
+                        b = Coordinates_.Nbasis(mx_pos, my_pos, orb2) + ncells_ * n_orbs_ * spin;
                         assert(a != b);
                         if (a != b)
                         {
-                            HTB_(b, a) = complex<double>(1.0 *Parameters_.hopping_NN_X(orb1,orb2), 0.0);
+                            HTB_(b, a) = complex<double>(1.0 * Parameters_.hopping_NN_X(orb1, orb2), 0.0);
                             HTB_(a, b) = conj(HTB_(b, a));
                         }
                     }
@@ -623,17 +616,21 @@ void Hamiltonian::HTBCreate()
         mx_pos = Coordinates_.indx_cellwise(m);
         my_pos = Coordinates_.indy_cellwise(m);
 
-        for (int spin = 0; spin < 2; spin++){
-            for(int orb1=0;orb1<n_orbs_;orb1++){
-                for(int orb2=0;orb2<n_orbs_;orb2++){
-                    if(Parameters_.hopping_NN_Y(orb1,orb2)!=0.0){
+        for (int spin = 0; spin < 2; spin++)
+        {
+            for (int orb1 = 0; orb1 < n_orbs_; orb1++)
+            {
+                for (int orb2 = 0; orb2 < n_orbs_; orb2++)
+                {
+                    if (Parameters_.hopping_NN_Y(orb1, orb2) != 0.0)
+                    {
 
-                        a = Coordinates_.Nbasis(lx_pos,ly_pos,orb1) + ncells_*n_orbs_*spin;
-                        b = Coordinates_.Nbasis(mx_pos,my_pos,orb2) + ncells_*n_orbs_*spin;
+                        a = Coordinates_.Nbasis(lx_pos, ly_pos, orb1) + ncells_ * n_orbs_ * spin;
+                        b = Coordinates_.Nbasis(mx_pos, my_pos, orb2) + ncells_ * n_orbs_ * spin;
                         assert(a != b);
                         if (a != b)
                         {
-                            HTB_(b, a) = complex<double>(1.0*Parameters_.hopping_NN_Y(orb1,orb2), 0.0);
+                            HTB_(b, a) = complex<double>(1.0 * Parameters_.hopping_NN_Y(orb1, orb2), 0.0);
                             HTB_(a, b) = conj(HTB_(b, a));
                         }
                     }
@@ -641,41 +638,33 @@ void Hamiltonian::HTBCreate()
             }
         }
 
-
         //intra unit cell A(0)<-->B(1)
-        for (int spin = 0; spin < 2; spin++){
+        for (int spin = 0; spin < 2; spin++)
+        {
 
             //A(0)<-->B(1)
-            a = Coordinates_.Nbasis(lx_pos,ly_pos,0) + ncells_*n_orbs_*spin;
-            b = Coordinates_.Nbasis(lx_pos,ly_pos,1) + ncells_*n_orbs_*spin;
+            a = Coordinates_.Nbasis(lx_pos, ly_pos, 0) + ncells_ * n_orbs_ * spin;
+            b = Coordinates_.Nbasis(lx_pos, ly_pos, 1) + ncells_ * n_orbs_ * spin;
             assert(a != b);
-            HTB_(b, a) = complex<double>(1.0*Parameters_.hopping_intracell, 0.0);
+            HTB_(b, a) = complex<double>(1.0 * Parameters_.hopping_intracell, 0.0);
             HTB_(a, b) = conj(HTB_(b, a));
 
             //A(0)<-->C(2)
-            a = Coordinates_.Nbasis(lx_pos,ly_pos,0) + ncells_*n_orbs_*spin;
-            b = Coordinates_.Nbasis(lx_pos,ly_pos,2) + ncells_*n_orbs_*spin;
+            a = Coordinates_.Nbasis(lx_pos, ly_pos, 0) + ncells_ * n_orbs_ * spin;
+            b = Coordinates_.Nbasis(lx_pos, ly_pos, 2) + ncells_ * n_orbs_ * spin;
             assert(a != b);
-            HTB_(b, a) = complex<double>(1.0*Parameters_.hopping_intracell, 0.0);
+            HTB_(b, a) = complex<double>(1.0 * Parameters_.hopping_intracell, 0.0);
             HTB_(a, b) = conj(HTB_(b, a));
-
         }
-
-
-
-
-
     }
-
-
-
 
 } // ----------
 
 void Hamiltonian::HTBClusterCreate()
 {
 
-    if(Parameters_.ED_==false){
+    if (Parameters_.ED_ == false)
+    {
 
         int l, m, a, b;
         int lx_pos, ly_pos;
@@ -689,23 +678,26 @@ void Hamiltonian::HTBClusterCreate()
             lx_pos = CoordinatesCluster_.indx_cellwise(l);
             ly_pos = CoordinatesCluster_.indy_cellwise(l);
 
-
             // * +x direction Neighbor
             m = CoordinatesCluster_.neigh(l, 0);
             mx_pos = CoordinatesCluster_.indx_cellwise(m);
             my_pos = CoordinatesCluster_.indy_cellwise(m);
 
-            for (int spin = 0; spin < 2; spin++){
-                for(int orb1=0;orb1<n_orbs_;orb1++){
-                    for(int orb2=0;orb2<n_orbs_;orb2++){
-                        if(Parameters_.hopping_NN_X(orb1,orb2)!=0.0){
-                            a = CoordinatesCluster_.Nbasis(lx_pos,ly_pos,orb1) + ncells_cluster*n_orbs_*spin;
-                            b = CoordinatesCluster_.Nbasis(mx_pos,my_pos,orb2) + ncells_cluster*n_orbs_*spin;
+            for (int spin = 0; spin < 2; spin++)
+            {
+                for (int orb1 = 0; orb1 < n_orbs_; orb1++)
+                {
+                    for (int orb2 = 0; orb2 < n_orbs_; orb2++)
+                    {
+                        if (Parameters_.hopping_NN_X(orb1, orb2) != 0.0)
+                        {
+                            a = CoordinatesCluster_.Nbasis(lx_pos, ly_pos, orb1) + ncells_cluster * n_orbs_ * spin;
+                            b = CoordinatesCluster_.Nbasis(mx_pos, my_pos, orb2) + ncells_cluster * n_orbs_ * spin;
 
                             assert(a != b);
                             if (a != b)
                             {
-                                HTBCluster_(b, a) = complex<double>(1.0 *Parameters_.hopping_NN_X(orb1,orb2), 0.0);
+                                HTBCluster_(b, a) = complex<double>(1.0 * Parameters_.hopping_NN_X(orb1, orb2), 0.0);
                                 HTBCluster_(a, b) = conj(HTBCluster_(b, a));
                             }
                         }
@@ -718,16 +710,20 @@ void Hamiltonian::HTBClusterCreate()
             mx_pos = CoordinatesCluster_.indx_cellwise(m);
             my_pos = CoordinatesCluster_.indy_cellwise(m);
 
-            for (int spin = 0; spin < 2; spin++){
-                for(int orb1=0;orb1<n_orbs_;orb1++){
-                    for(int orb2=0;orb2<n_orbs_;orb2++){
-                        if(Parameters_.hopping_NN_Y(orb1,orb2)!=0.0){
-                            a = CoordinatesCluster_.Nbasis(lx_pos,ly_pos,orb1) + ncells_cluster*n_orbs_*spin;
-                            b = CoordinatesCluster_.Nbasis(mx_pos,my_pos,orb2) + ncells_cluster*n_orbs_*spin;
+            for (int spin = 0; spin < 2; spin++)
+            {
+                for (int orb1 = 0; orb1 < n_orbs_; orb1++)
+                {
+                    for (int orb2 = 0; orb2 < n_orbs_; orb2++)
+                    {
+                        if (Parameters_.hopping_NN_Y(orb1, orb2) != 0.0)
+                        {
+                            a = CoordinatesCluster_.Nbasis(lx_pos, ly_pos, orb1) + ncells_cluster * n_orbs_ * spin;
+                            b = CoordinatesCluster_.Nbasis(mx_pos, my_pos, orb2) + ncells_cluster * n_orbs_ * spin;
                             assert(a != b);
                             if (a != b)
                             {
-                                HTBCluster_(b, a) = complex<double>(1.0 *Parameters_.hopping_NN_Y(orb1,orb2), 0.0);
+                                HTBCluster_(b, a) = complex<double>(1.0 * Parameters_.hopping_NN_Y(orb1, orb2), 0.0);
                                 HTBCluster_(a, b) = conj(HTBCluster_(b, a));
                             }
                         }
@@ -735,32 +731,29 @@ void Hamiltonian::HTBClusterCreate()
                 }
             }
 
-
-
             //intra unit cell A(0)<-->B(1)
-            for (int spin = 0; spin < 2; spin++){
+            for (int spin = 0; spin < 2; spin++)
+            {
 
                 //A(0)<-->B(1)
-                a = CoordinatesCluster_.Nbasis(lx_pos,ly_pos,0) + ncells_cluster*n_orbs_*spin;
-                b = CoordinatesCluster_.Nbasis(lx_pos,ly_pos,1) + ncells_cluster*n_orbs_*spin;
+                a = CoordinatesCluster_.Nbasis(lx_pos, ly_pos, 0) + ncells_cluster * n_orbs_ * spin;
+                b = CoordinatesCluster_.Nbasis(lx_pos, ly_pos, 1) + ncells_cluster * n_orbs_ * spin;
                 assert(a != b);
-                HTB_(b, a) = complex<double>(1.0*Parameters_.hopping_intracell, 0.0);
+                HTB_(b, a) = complex<double>(1.0 * Parameters_.hopping_intracell, 0.0);
                 HTB_(a, b) = conj(HTB_(b, a));
 
                 //A(0)<-->C(2)
-                a = CoordinatesCluster_.Nbasis(lx_pos,ly_pos,0) + ncells_cluster*n_orbs_*spin;
-                b = CoordinatesCluster_.Nbasis(lx_pos,ly_pos,2) + ncells_cluster*n_orbs_*spin;
+                a = CoordinatesCluster_.Nbasis(lx_pos, ly_pos, 0) + ncells_cluster * n_orbs_ * spin;
+                b = CoordinatesCluster_.Nbasis(lx_pos, ly_pos, 2) + ncells_cluster * n_orbs_ * spin;
                 assert(a != b);
-                HTB_(b, a) = complex<double>(1.0*Parameters_.hopping_intracell, 0.0);
+                HTB_(b, a) = complex<double>(1.0 * Parameters_.hopping_intracell, 0.0);
                 HTB_(a, b) = conj(HTB_(b, a));
-
             }
-
         }
-
     }
-    else{
-        HTBCluster_=HTB_;
+    else
+    {
+        HTBCluster_ = HTB_;
     }
 
     // HTBCluster_.print();
@@ -776,7 +769,7 @@ void Hamiltonian::Hoppings()
 void Hamiltonian::copy_eigs(int i)
 {
 
-    int space = 2 * ncells_ *n_orbs_;
+    int space = 2 * ncells_ * n_orbs_;
 
     if (i == 0)
     {
@@ -797,7 +790,7 @@ void Hamiltonian::copy_eigs(int i)
 void Hamiltonian::copy_eigs_Cluster(int i)
 {
 
-    int space = 2 * ncells_cluster *n_orbs_;
+    int space = 2 * ncells_cluster * n_orbs_;
 
     if (i == 0)
     {
